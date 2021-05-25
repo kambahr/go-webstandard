@@ -5,7 +5,7 @@
 It uses native javascript with bootstrap and also original Go http libraries to demonstrate rendering dynamic content.
 
 
-To run the webiste:
+To run the website:
 
 - Start a shell window.
 - go build -o webstandard && ./webstandard --portno 1265
