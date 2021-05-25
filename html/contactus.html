@@ -1,0 +1,76 @@
+<div class="row" style="width:100%;">
+    <div class="col-12">
+      <nav aria-label="breadcrumb" style="margin-top:54px">
+        <ol class="breadcrumb q-breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/about">About</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Contact Me</li>
+        </ol>  
+      </nav>
+    </div>
+</div>  
+<div class="container">
+<div style="margin-top:0px">
+
+<h3>Contact Us</h3>
+<br><br>
+
+<div class="alert alert-success" role="alert" id="msgSuccess" style="width:450px;display:none" >
+  <span class="ml-5">Thank you for sumbitting your message!</span>
+</div>
+
+<form action="javascript:submitContactInfo();" id="frmContact" 
+style="max-width:500px;text-align: left;">
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="cname">Name</label>
+        <input type="text" maxlength="150" name="name"
+         class="form-control needs-validation" id="cname" value="" required>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+      <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="cemail">Email</label>
+        <input type="email" 
+        maxlength="150" name="email" style="text-transform: lowercase;" class="form-control needs-validation" 
+        id="cemail" value="" required>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="cmessage">Message</label>
+        <textarea type="text" maxlength="1000" style="min-height: 110px;max-height: 110px;" 
+         name="message" class="form-control needs-validation" id="cmessage" 
+        aria-describedby="validationServer03Feedback" required></textarea>
+        <div id="validationServer03Feedback" class="invalid-feedback">
+          Please enter a message.
+        </div>
+      </div>
+    </div>  
+    <button class="btn btn-outline-primary btn-lg  btn-block" it="btnSendMsg"
+    style="display: block;" type="submit">Send</button>        
+</form>
+
+<script>
+  function submitContactInfo(){
+      let o = new Object()
+      o.Name = document.getElementById('cname').value;
+      o.Email = document.getElementById('cemail').value;
+      o.Message = document.getElementById('cmessage').value;
+      url = 'contact?x25'
+        let j = JSON.stringify(o);
+        xhttp = new XMLHttpRequest();
+        xhttp.open('POST', url, true);
+        xhttp.send(j);
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4){
+              document.getElementById('frmContact').style.display = 'none';
+              $('#msgSuccess').fadeIn();
+            }
+        }            
+  }  
+</script>  

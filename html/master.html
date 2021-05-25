@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    {{.COMMENT
+      For this sample, one of the images in the gallery is used for the favico.
+     }}
+	   <link rel="icon" type="image/png" href="/assets/img/g/pexels-kat-jayne-545313.jpg" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Golang Sample Website">
+    <meta name="veriosn" content="v1.0.0">
+    <title>Golang Sample Website</title>
+  <link rel="stylesheet" href="/assets/scripts/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <script src="/assets/scripts/jquery/3.4.0/jquery.min.js"></script>
+  <script src="/assets/scripts/bootstrap/4.3.1/js/bootstrap.min.js"></script>    
+    <style>
+      .mainbg{
+        background: rgb(237,238,238);
+        background: linear-gradient(90deg, rgba(237,238,238,1) 0%, rgba(34,34,34,1) 0%, rgba(68,60,60,1) 9%, rgba(33,32,32,1) 28%, rgba(51,49,49,1) 48%, rgba(34,31,31,1) 73%, rgba(78,77,77,1) 100%);
+      }
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      @media only screen and (max-width: 600px) {
+        /* put your styling for mobile view here */
+        #musicCont{
+          margin-left:-42px;
+          max-width:430px;
+        }
+        #homejumbotron{
+          margin-top:30px;
+        }
+      }
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    .iconx{
+      cursor: pointer;
+      height: 44px;
+      opacity: 0.6;
+    }
+    .iconx:hover{
+     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(71, 77, 69, 0.6);
+    }
+    .iconxsmall:hover{
+     box-shadow: 0 0.75p,x 1.25px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(71, 77, 69, 0.6);
+    }
+    input::-webkit-input-placeholder {
+      color: rgb(172, 172, 172) !important;
+    }
+    .q-breadcrumb{
+    background-color: transparent;
+    font-size: 10.2pt;
+    margin-left: 0px;
+  }
+  .nav-link-selected{
+    color:chartreuse !important;
+  }
+   </style>    
+     <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+  </head>
+  <body> 
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark mainbg">
+<a class="navbar-brand" href="/" style="color:lawngreen; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;" >
+  Golang Sample Website
+</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" 
+  data-target="#navbarx" aria-controls="navbarx" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse mw-3" id="navbarx">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a id="navhome" class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a id="navpage1" class="nav-link" href="/page_1">Page 1</a>
+      </li>
+      <li class="nav-item">
+        <a id="navgallery" class="nav-link" href="/gallery">Gallery</a>
+      </li>
+      <li class="nav-item">
+        <a id="navcounterpoint" class="nav-link" href="/music/theory/counterpoint/what-is-counterpoint">What is Counterpoint</a>
+      </li>      
+    </ul>
+    {{.COMMENT This is a comment that you don't want to be shown, when this page is rendered.
+    Text in this block will be removed and not be visible to the end-user.
+    }}  
+    <form class="form-inline my-2 my-lg-0">
+      <a href="/about" class="btn btn-outline-success my-2 my-sm-0">About</a>
+    </form>
+  </div>
+</nav>
+{{.COMMENT ... and yet another comment; you can have multiple blocks comment on the same page }}
+{{.MainContent}}
+<script>      
+    {{.COMMENT  
+      A simple array with a separator (image name | URL) is used to 
+      update the breadcrumb.
+    }}
+      var author = [
+        "pexels-johannes-plenio-1456306.jpg|https://www.pexels.com/photo/white-dandelion-flower-1456306/",
+        "pexels-josh-sorenson-976843.jpg|https://www.pexels.com/photo/shallow-focus-photography-of-white-flowers-976843/",
+        "pexels-steve-johnson-2130475.jpg|https://www.pexels.com/photo/blue-red-and-black-abstract-painting-2130475/",
+        "pexels-khari-hayden-923167.jpg|https://www.pexels.com/photo/depth-of-field-photography-of-brown-tree-logs-923167/",
+        "pexels-diego-madrigal-3836292.jpg|https://www.pexels.com/photo/water-falls-in-the-middle-of-the-forest-3836292/",
+        "pexels-quang-nguyen-vinh-3871703.jpg|https://www.pexels.com/photo/scenic-photo-of-sea-during-dawn-3871703/",
+        "pexels-greg-galas-3647545.jpg|https://www.pexels.com/photo/waterfalls-in-the-middle-of-green-trees-3647545/",
+        "pexels-kat-jayne-545313.jpg|https://www.pexels.com/photo/yellow-plant-545313/"
+    ]
+      var mGalleryLastImg = '';
+      var mGalleryOn = false;
+      var l = document.location.href.split('/');
+      if (l[l.length-1].toLocaleLowerCase() == 'gallery'){
+        mGalleryOn = true; 
+        let d = document.getElementsByClassName('carousel-item active');  
+        imgx = d[0].getElementsByTagName('img')[0];  
+        setPhotoAuthorName(imgx);
+      }
+
+      function setPhotoAuthorName(img){  
+        if(mGalleryLastImg == img.src) return; 
+          mGalleryLastImg = img.src;
+          let v = img.src.split('/')
+          let n = v[v.length-1];
+          {{.COMMENT find the link. }}
+          let urlx = '';
+          for(let i=0; i < author.length; i++){
+            if (author[i].indexOf(n) > -1){
+              urlx = author[i].split('|')[1];
+              break;
+            }
+          }
+          {{.COMMENT Full name and href to pexels.com. }}
+          let fn = n.split('-');
+          let fName = fn[1];
+          let lName = fn[2];
+          document.getElementById('galleryBreadPhoto').innerHTML = 
+          '<a title="See image on pexels.com" target="_blank" href="'+urlx+'">'+ fName + ' ' + lName + '</a>';           
+      }
+
+    {{.COMMENT observer is only on for the gallery page. }}
+    if(mGalleryOn){      
+      let imgx = document.querySelector('.carousel-inner');
+      let observer = new MutationObserver(mutations => {
+         mutations.forEach(record =>{
+            if(record.type == "attributes"){
+              {{.COMMENT just get the active one (there is only on active in the list). }}
+              let d = document.getElementsByClassName('carousel-item active');  
+              imgx = d[0].getElementsByTagName('img')[0];  
+              setPhotoAuthorName(imgx);
+            }
+         });
+      });
+      observer.observe(imgx,{
+        attributes:true,
+        childList: true,
+        subtree: true,
+        characterDataOldValue: true
+      });
+    }
+    </script>
+</html>

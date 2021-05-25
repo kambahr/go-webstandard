@@ -1,0 +1,39 @@
+<script>
+  let coll = document.getElementsByClassName('nav-link');
+  for(let i=0; i < coll.length; i++){
+    coll[i].className = 'nav-link';
+  }
+  document.getElementById('navgallery').className = 'nav-link nav-link-selected';
+  {{.COMMENT 
+    /*
+    Change the background only for this page.
+    The best option is to apply the style to the body... as div 
+    elements could flicker a bit (depending on the browser and client's
+    network), while displaying the background image.
+    */
+  }}
+  document.body.style = "background-color:smokewhite"
+</script>
+<nav aria-label="breadcrumb" style="margin-top:54px">
+  <ol class="breadcrumb q-breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Gallery</li>
+    <li id="galleryBreadPhoto" class="breadcrumb-item active" style="text-transform: capitalize;" aria-current="page"></li>
+  </ol>  
+</nav>
+<div class="container mt-n3">  
+  <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">    
+    <div class="carousel-inner">
+      {{.Carousel}}
+    </div>
+    <a onclick="" class="carousel-control-prev" href="#carouselExampleFade" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a onclick="" class="carousel-control-next" href="#carouselExampleFade" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
