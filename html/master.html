@@ -29,6 +29,9 @@
       }
       @media only screen and (max-width: 600px) {
         /* put your styling for mobile view here */
+        #navtext{
+          left:-50px !important;
+        } 
         #musicCont{
           margin-left:-42px;
           max-width:430px;
@@ -65,11 +68,10 @@
     color:chartreuse !important;
   }
    </style>    
-     <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
   </head>
   <body> 
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark mainbg">
-<a class="navbar-brand" href="/" style="color:lawngreen; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;" >
+<a class="navbar-brand" href="/" style="color:honeydew; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;" >
   Golang Sample Website
 </a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" 
@@ -88,9 +90,24 @@
         <a id="navgallery" class="nav-link" href="/gallery">Gallery</a>
       </li>
       <li class="nav-item">
-        <a id="navcounterpoint" class="nav-link" href="/music/theory/counterpoint/what-is-counterpoint">What is Counterpoint</a>
-      </li>      
+        <a id="navcounterpoint" class="nav-link" 
+        href="/music/theory/counterpoint/what-is-counterpoint">What is Counterpoint</a>
+      </li> 
+      {{.COMMENT     
+      <li class="nav-item">
+        <p id="navtext" class="card-text mt-2 ml-5" 
+        style="font-size: 14pt;position: relative;left:100px; color:wheat;letter-spacing: 0.02cm">
+        This is a live-demo for <a id="demoHref" 
+        href="https://github.com/kambahr/go-webstandard" target="_blank">go-webstandard</a>         
+      </p>
+      </li>
+    }}
     </ul>
+    <style>
+      #demoHref{
+        color:rgb(94, 231, 117)
+      }
+    </style>
     {{.COMMENT This is a comment that you don't want to be shown, when this page is rendered.
     Text in this block will be removed and not be visible to the end-user.
     }}  
