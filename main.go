@@ -60,7 +60,7 @@ func main() {
 	// Both files must be PEM format.
 	//   Note that there is not a separate arg to apply the
 	//   chaing certficate. The one cert file can include the
-	//   chain (in any) along with the root cert.
+	//   chain (if any) along with the root cert.
 	// tlsCertCertPath:= <full path to the cert file>
 	// tlsCertKeyPath:= <full path to the private key file>
 	// log.Fatal(svr.ListenAndServeTLS(tlsCertCertPath, tlsCertKeyPath))
@@ -109,7 +109,7 @@ func connState(conn net.Conn, connState http.ConnState) {
 
 	// These help reduce the too many open files errors.
 	maxConnIODeadLine := 20      // Limit the IO to 20 seconds.
-	maxConnIOWriteDeadLine := 30 // Extra time for over timeout.\
+	maxConnIOWriteDeadLine := 30 // Extra time for over timeout.
 	conn.SetDeadline(time.Now().Add(time.Duration(maxConnIODeadLine) * time.Second))
 	conn.SetReadDeadline(time.Now().Add(time.Duration(maxConnIOWriteDeadLine) * time.Second))
 	conn.SetWriteDeadline(time.Now().Add(time.Duration(maxConnIOWriteDeadLine) * time.Second))
