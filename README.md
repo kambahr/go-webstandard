@@ -18,7 +18,7 @@ loaded into the {{.MainContent}} block, before http response is written.
 
 ##### Search Engines
 Although there is one master and many partial html files, search engines will still receive
-the enitre page as one whole page. You can add a &lt;meta name="robots" content="noindex"&gt;
+the entire page as one whole page. You can add a &lt;meta name="robots" content="noindex"&gt;
 (in the &lt;header&gt; block of the master.html) for the pages that are not be indexed by search engines.
 
 #### Security
@@ -35,7 +35,7 @@ There are two places that you can apply security
 #### Dealing with the *too many open files* error
 The Deadline, ReadDeadline, and WriteDeadline are set to a default value in the the connState() func. This reduces the risk of getting the *too many open files* error. You can flood the website with requests to test this.
 
-Run a few instances of the following simultaneously in a shell window.
+Run a few instances of the following, simultaneously, in shell windows.
 - Linux
   * for i in {1..1000};do curl http:&#47;&#47;localhost:1265/gallery;echo ... $i ...;done;
 - Windows
@@ -43,9 +43,9 @@ Run a few instances of the following simultaneously in a shell window.
 
 #### Caching
 - Assets
-  * All asset files are cached via page.WebUtil, although browsers do not make repeated calls for static files (i.e css, js,...).
+  * All asset files are cached via page.WebUtil, although browsers do not make repeated calls for static files (i.e. css, js,...).
 - Image Gallery
-  * The image gallery page (gallery.html) is explicityly cached for a few minutes. Note that the images will still be handled directly by page.WebUtil and it is only the body of the rendered html (from gallery.html) that is cahced, so that the operation of getting file names from disk is not repeated on every reqeust. 
+  * The image gallery page (gallery.html) is explicitly cached for a few minutes. Note that the images will still be handled directly by page.WebUtil and it is only the body of the rendered html (from gallery.html) that is cached, so that the operation of getting file names from disk is not repeated on every request. 
 
 #### Comments
 All text inside the {{.COMMENT <text goes here> }} blocks (on the html files) are removed before http response is written, so the 
