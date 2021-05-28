@@ -10,7 +10,7 @@ An image gallery is included to further show how html can be rendered via Go. Im
 There are only two handlers
 
 - http.HandleFunc("/assets/", page.WebUtil.ServeStaticFile) ... all asset (.css, .js, img,...) files.
-- http.HandleFunc("/", page.FromRoot)** ................................. all other paths (.htm files). 
+- http.HandleFunc("/", page.FromRoot) .................................... all other paths (.htm files). 
 
 #### Master Page
 On each request, *master.html* is first read; and then the content of the target page is
