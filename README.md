@@ -26,7 +26,7 @@ There are two places that you can apply security
 - connState(conn net.Conn, connState http.ConnState)
   * You can close (drop) connections by IP address.
 - http.HandleFunc("/", page.FromRoot)
-  * You can send 403 (Forbidden) or 401 (Unauthorized) error back to the caller based
+  * You can send 403 (Forbidden) or 401 (Unauthorized) error back to callers based
     on URL path (.env, .config, appdata, _private,...), http method (POST, DELETE,...), or headers (bad characters, unwanted cookie values,... ). Note that requests handled by page.WebUtil.ServeStaticFile()
     will not be caught by page.FromRoot.
 - javascript code in the URL
@@ -45,7 +45,7 @@ Run a few instances of the following, simultaneously, in shell windows.
 - Assets
   * All asset files are cached via page.WebUtil, although browsers do not make repeated calls for static files (i.e. css, js,...).
 - Image Gallery
-  * The image gallery page (gallery.html) is explicitly cached for a few minutes. Note that the images will still be handled directly by page.WebUtil and it is only the body of the rendered html (from gallery.html) that is cached, so that the operation of getting file names from disk is not repeated on every request. 
+  * The image gallery page (gallery.html) is explicitly cached for a few minutes. Note that the images will still be handled directly by page.WebUtil and it is only the body of the rendered html (from gallery.html) that is cached, so that the operations of getting file names from disk, and redering html tags are not repeated on every request. 
 
 #### Comments
 All text inside the {{.COMMENT <text goes here> }} blocks (on the html files) are removed before http response is written, so the 
