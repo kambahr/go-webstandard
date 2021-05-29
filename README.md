@@ -29,8 +29,9 @@ There are two places that you can apply security
   * You can send 403 (Forbidden) or 401 (Unauthorized) error back to callers based
     on URL path (.env, .config, appdata, _private,...), http method (POST, DELETE,...), or headers (bad characters, unwanted cookie values,... ). Note that requests handled by page.WebUtil.ServeStaticFile()
     will not be caught by page.FromRoot.
-- javascript code in the URL
-  * script code in the URL path will not be interpreted and/or cause run-time error; the caller will only receive a 404 (Not Found) error.
+    
+##### javascript code in the URL
+script code in the URL path will not be interpreted and/or cause run-time error; the caller will only receive a 404 (Not Found) error.
 
 #### Dealing with the *too many open files* error
 The Deadline, ReadDeadline, and WriteDeadline are set to a default value in the the connState() func. This reduces the risk of getting the *too many open files* error. You can flood the website with requests to test this.
