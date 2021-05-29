@@ -57,5 +57,3 @@ caller will not be able to see those by viewing the page-code.
 - Start a shell window.
 - go build -o webstandard && ./webstandard --portno 1265
 - Navigate to http:&#47;&#47;localhost:1265
-
-See https://go-webstandard.githubsamples.com for a live demo.
