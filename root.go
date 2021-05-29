@@ -169,7 +169,7 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// Server master + content file.
+	// Serve master + content file.
 	w.Write(bFinal)
 }
 func (e Environment) writeFooter(b []byte, rPath string) []byte {
