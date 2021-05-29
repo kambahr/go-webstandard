@@ -37,7 +37,7 @@ func main() {
 		Addr:           fmt.Sprintf(":%v", portNoArg),
 		MaxHeaderBytes: 20480,
 
-		// This prevents http2 calls by the client browser
+		// This seems to prevent http2 calls by the client browser
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 
 		// No checks on the client cert
@@ -46,7 +46,7 @@ func main() {
 		},
 
 		// These should reflect what you expect from your site
-		// also see comments in connStatex().
+		// also see comments in connState().
 		ReadTimeout:       20 * time.Second,
 		WriteTimeout:      20 * time.Second,
 		IdleTimeout:       60 * time.Second,
@@ -57,9 +57,9 @@ func main() {
 	}
 
 	// If you are using https, you can call the following:
-	// Both files must be PEM format.
-	//   Note that there is not a separate arg to apply the
-	//   chaing certficate. The one cert file can include the
+	// both files must be in PEM format.
+	//   Note that there is no separate arg to apply the
+	//   chaine certficate. The one cert file can include the
 	//   chain (if any) along with the root cert.
 	// tlsCertCertPath:= <full path to the cert file>
 	// tlsCertKeyPath:= <full path to the private key file>
@@ -68,16 +68,14 @@ func main() {
 	log.Fatal(svr.ListenAndServe())
 }
 
-// foo handles monitoring/security tasks that are to
-// be done before the caller's request gets to the http
-// handlers. Note that this func must run in a separate thread than
-// that of the current (in-process).
+// foo handles monitoring/security tasks. Note that this func
+// must run in a separate thread than that of the current (in-process).
 // func (ws *website) foo(ipAddr string) {
 // 	  TODO:
 // }
 
 // connState enables you to monitor callers before their
-// request get to the handlers. You can use this for security
+// requests get to the handlers. You can use this for security
 // performance enhancements, or monitoring (i.e. number of
 // active connections).
 func connState(conn net.Conn, connState http.ConnState) {
@@ -91,7 +89,7 @@ func connState(conn net.Conn, connState http.ConnState) {
 	//    http://localhost:8000/mycss.css........127.0.0.1:35692
 	//    http://localhost:8000/myjs.js..........127.0.0.1:35693
 	//
-	// If you use XMLHttpRequest() to get a response back. The identifier will remain
+	// If you use XMLHttpRequest to get a response back. The identifier will remain
 	// the same even though you may get a different content.
 	//    For example:
 	//    http://localhost:8000/page1.html........127.0.0.1:35692
