@@ -7,12 +7,6 @@ import (
 	"github.com/kambahr/go-webutil"
 )
 
-// Page holds the content page and the year.
-type Page struct {
-	MainContent string // {{.MainContent}}
-	ThisYear    string // {{.ThisYear}}
-}
-
 // Environment holds al global object.
 type Environment struct {
 	WebRootPath string
