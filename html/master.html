@@ -5,8 +5,7 @@
     {{.COMMENT
       For this sample, one of the images in the gallery is used for the favico.
      }}
-	   <link rel="icon" type="image/png" href="/assets/img/g/pexels-kat-jayne-545313.jpg" />
-    
+	   <link rel="icon" type="image/png" href="/assets/img/g/pexels-kat-jayne-545313.jpg" />    
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Golang Sample Website">
     <meta name="veriosn" content="v1.0.0">
@@ -93,20 +92,28 @@
         <a id="navcounterpoint" class="nav-link" 
         href="/music/theory/counterpoint/what-is-counterpoint">What is Counterpoint</a>
       </li> 
-      {{.COMMENT     
       <li class="nav-item">
         <p id="navtext" class="card-text mt-2 ml-5" 
         style="font-size: 14pt;position: relative;left:100px; color:wheat;letter-spacing: 0.02cm">
-        This is a live-demo for <a id="demoHref" 
-        href="https://github.com/kambahr/go-webstandard" target="_blank">go-webstandard</a>         
+        This is a live-demo for <span id="demoHref" style="color:lawngreen;cursor:default"
+        title="https://github.com/kambahr/go-webstandard">go-webstandard</span>
       </p>
       </li>
-    }}
     </ul>
     <style>
       #demoHref{
         color:rgb(94, 231, 117)
       }
+    .blog-footer {
+      padding: 2.5rem 0;
+      color: #727272;
+      text-align: center;
+      background-color: #f9f9f9;
+      border-top: .05rem solid #e5e5e5;
+    }
+    .blog-footer p:last-child {
+      margin-bottom: 0;
+    }
     </style>
     {{.COMMENT This is a comment that you don't want to be shown, when this page is rendered.
     Text in this block will be removed and not be visible to the end-user.
@@ -118,6 +125,33 @@
 </nav>
 {{.COMMENT ... and yet another comment; you can have multiple blocks comment on the same page }}
 {{.MainContent}}
+<style>
+  .footerx {
+     position: relative;
+     border-top:1px solid lightblue;
+     top:10px;
+     left: 0;
+     bottom: 0;
+     width: 100%;
+     text-align: center;
+  }
+  #nbtmx{        
+    list-style: none;
+    padding-top: 10px;
+  }
+  #nbtmx li{
+    display: inline;
+    padding-right:15px
+  }
+  </style>
+  <br />
+  <div class="footerx">
+    <div class="container" style="height: 40px;">
+      <ul id="nbtmx">
+        {{.MasterFooterLinks}}
+      </ul>
+  </div>
+</div>
 <script>      
     {{.COMMENT  
       A simple array with a separator (image name | URL) is used to 
