@@ -82,10 +82,10 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	rPath := strings.ToLower(r.URL.Path)
 
 	// Here you can process dynamic content or filter requests for securty.
-	// If you only want to serve static as-is html file, you can those
-	// to WebUtil.ServeStaticFile() -- see main() func.
+	// If you only want to serve static as-is html file, you can leave those
+	// to WebUtil.ServeStaticFile() to handle -- see main() func.
 	// ...
-	// Uncomment the Prinln() line -- to see the request path.
+	// Uncomment the Println() line -- to see the request path.
 	// If you keep requesting images (clicking the next icon on the
 	// gallery page), you'll notice that images are displaying accordingly,
 	// and no requests are cuaght here. The reason is that those are handled
@@ -154,6 +154,8 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	// Replace any other variables.
 	bFinal = bytes.Replace(bFinal, []byte("{{.ThisYear}}"), []byte(fmt.Sprintf("%d", time.Now().Year())), -1)
 
+	bFinal = e.writeFooter(bFinal, rPath)
+
 	// Replace the comments last.
 	//
 	// Comments inside this block {{.COMMENT  }} will be removed before
@@ -169,6 +171,32 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 
 	// Server master + content file.
 	w.Write(bFinal)
+}
+func (e Environment) writeFooter(b []byte, rPath string) []byte {
+	ft := ""
+
+	if strings.HasPrefix(rPath, "/about") {
+		ft =
+			`<li><a id="mainfooterterm" href="/terms-of-use">Terms of Use</a></li>
+			<li><a id="mainfooterprivacy" href="/privacy-policy">Privacy Policy</a></li>`
+	} else if strings.HasPrefix(rPath, "/terms-of-use") {
+		ft =
+			`
+			<li><a id="mainfooterprivacy" href="/privacy-policy">Privacy Policy</a></li>
+			<li><a id="mainfooterabout" href="/about">About</a></li>
+			`
+
+	} else if strings.HasPrefix(rPath, "/privacy-policy") {
+		ft =
+			`<li><a id="mainfooterterm" href="/terms-of-use">Terms of Use</a></li>
+			<li><a id="mainfooterabout" href="/about">About</a></li>`
+	} else {
+		ft = `<li><a id="mainfooterterm" href="/terms-of-use">Terms of Use</a></li>
+		<li><a id="mainfooterprivacy" href="/privacy-policy">Privacy Policy</a></li>
+		<li><a id="mainfooterabout" href="/about">About</a></li>`
+	}
+
+	return bytes.Replace(b, []byte("{{.MasterFooterLinks}}"), []byte(ft), -1)
 }
 
 // getRawMaster gets the master html page as-is from disk.
