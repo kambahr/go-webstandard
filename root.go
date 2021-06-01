@@ -12,7 +12,7 @@ import (
 // getGalleryCarousel gets the files name in /img/g and concatenates
 // html tags that fill the value in the innerHTML of <div class="carousel-inner">
 // via {{.Carousel}}.
-func (e Environment) getGalleryCarousel() []byte {
+func (e *Environment) getGalleryCarousel() []byte {
 	var carousel string
 
 	// gallery images are saved in /img/g dir, so that the
@@ -39,12 +39,13 @@ func (e Environment) getGalleryCarousel() []byte {
 }
 
 // getPhysicalPath gets the full path of a page.
-func (e Environment) getPhysicalPath(rPath string) (string, bool) {
+func (e *Environment) getPhysicalPath(rPath string) (string, bool) {
+
 	targetPagePhysPath := fmt.Sprintf("%s/html%s", e.WebRootPath, rPath)
 
 	// Note that the end-use can't get to the /appdata directory.
 	if !fileOrDirectoryExists(targetPagePhysPath) {
-		return fmt.Sprintf("%s/html/404.html", e.WebRootPath), false
+		return fmt.Sprintf("%s/html/errors/404.html", e.WebRootPath), false
 	}
 
 	return targetPagePhysPath, true
@@ -52,7 +53,7 @@ func (e Environment) getPhysicalPath(rPath string) (string, bool) {
 
 // getTargetPageFromCache get the contents of a page (in []byte),
 // from the cache object.
-func (e Environment) getTargetPageFromCache(rPath string) []byte {
+func (e *Environment) getTargetPageFromCache(rPath string) []byte {
 	var targetPageBytes []byte
 
 	targetPagePhysPath, pageFound := e.getPhysicalPath(rPath)
@@ -77,9 +78,37 @@ func (e Environment) getTargetPageFromCache(rPath string) []byte {
 }
 
 // FromRoot catches all requests.
-func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
+func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
+
+	if !e.validateRequest(w, r) {
+		// response already written; just bail out.
+		return
+	}
+
+	// if e.Config.Proto == "HTTPS" && strings.HasPrefix(r.Proto, "HTTP/") && e.Config.RedirectHTTPtoHTTPS {
+	// 	urlx := fmt.Sprintf("%s://%s:%d%s", strings.ToLower(e.Config.Proto), e.Config.HostName, e.Config.PortNo, r.URL.Path)
+	// 	http.Redirect(w, r, urlx, http.StatusTemporaryRedirect)
+	// 	return
+	// }
+
+	if e.Config.MaintenanceWindowOn {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		p := fmt.Sprintf("%s/maint-window.html", e.AppDataPath)
+		b, _ := ioutil.ReadFile(p)
+		b = bytes.ReplaceAll(b, []byte("{{.HostName}}"), []byte(e.Config.HostName))
+		b = bytes.Replace(b, []byte("{{.ThisYear}}"), []byte(fmt.Sprintf("%d", time.Now().Year())), -1)
+		b = e.WebUtil.RemoveCommentsFromByBiteArry(b, "{{.COMMENT ", "}}")
+		w.WriteHeader(200)
+		w.Write(b)
+		return
+	}
 
 	rPath := strings.ToLower(r.URL.Path)
+
+	if strings.HasPrefix(rPath, "/admin") {
+		e.adminRoot(w, r)
+		return
+	}
 
 	// Here you can process dynamic content or filter requests for securty.
 	// If you only want to serve static as-is html file, you can leave those
@@ -92,15 +121,6 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	// by WebUtil.ServeStaticFile directly; defined in the main func:
 	//     http.HandleFunc("/assets/", page.WebUtil.ServeStaticFile)
 	//fmt.Println(rPath)
-
-	// The http Method will not have any effect here. But it's
-	// good to warn the caller.
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusForbidden)
-		msg := fmt.Sprintf("error %d - %s\n", http.StatusForbidden, http.StatusText(http.StatusForbidden))
-		w.Write([]byte(msg))
-		return
-	}
 
 	if rPath == "/" || rPath == "/null" {
 		rPath = "/index"
@@ -151,10 +171,46 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	// This is all contents of the target page into the {{.MainContent}} block inside the master page.
 	bFinal := bytes.Replace(bMaster, []byte("{{.MainContent}}"), targetPageBytes, 1)
 
-	// Replace any other variables.
-	bFinal = bytes.Replace(bFinal, []byte("{{.ThisYear}}"), []byte(fmt.Sprintf("%d", time.Now().Year())), -1)
+	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	var empty []byte
 
-	bFinal = e.writeFooter(bFinal, rPath)
+	if e.Config.MessageBanner.On {
+		// if e.Config.MessageBanner.SecondsToDisplay > 0 &&
+		// 	e.Config.MessageBanner.TickCount == 0 {
+		// 	e.Config.MessageBanner.TickCount = e.Config.MessageBanner.SecondsToDisplay
+		// 	go e.setTimeoutResetMsgBanner()
+		// }
+
+		bmPath := fmt.Sprintf("%s//appdata/banner-msg.html", e.WebRootPath)
+		bm, err := ioutil.ReadFile(bmPath)
+		if err == nil {
+			bFinal = bytes.Replace(bFinal, []byte("{{.BannerMessage}}"), bm, 1)
+		} else {
+			fmt.Println("FromRoot()=>", err)
+			bFinal = bytes.Replace(bFinal, []byte("{{.BannerMessage}}"), empty, 1)
+		}
+	} else {
+		e.WebUtil.RemoveCookie("banner", r, w)
+
+		bFinal = bytes.Replace(bFinal, []byte("{{.BannerMessage}}"), empty, 1)
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	if r.Method != "HEAD" {
+		bFinal = e.applyPageVars(bFinal, rPath, w)
+		// Serve master + content file.
+		w.Write(bFinal)
+	}
+}
+func (e *Environment) applyPageVars(b []byte, rPath string, w http.ResponseWriter) []byte {
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// Replace any other variables.
+	b = bytes.Replace(b, []byte("{{.ThisYear}}"), []byte(fmt.Sprintf("%d", time.Now().Year())), -1)
+
+	b = e.writeFooter(b, rPath)
 
 	// Replace the comments last.
 	//
@@ -165,14 +221,12 @@ func (e Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	// ...you could also use your own (e.g. begin: #### end: ##@).
 	// Comments can appear in multiple places anywhere in your
 	// html file; see /html/master.html for an example.
-	bFinal = e.WebUtil.RemoveCommentsFromByBiteArry(bFinal, "{{.COMMENT ", "}}")
+	b = e.WebUtil.RemoveCommentsFromByBiteArry(b, "{{.COMMENT ", "}}")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	return b
 
-	// Serve master + content file.
-	w.Write(bFinal)
 }
-func (e Environment) writeFooter(b []byte, rPath string) []byte {
+func (e *Environment) writeFooter(b []byte, rPath string) []byte {
 	ft := ""
 
 	if strings.HasPrefix(rPath, "/about") {
@@ -200,7 +254,7 @@ func (e Environment) writeFooter(b []byte, rPath string) []byte {
 }
 
 // getRawMaster gets the master html page as-is from disk.
-func (e Environment) getRawMaster() []byte {
+func (e *Environment) getRawMaster() []byte {
 	fPath := fmt.Sprintf("%s/html/master.html", e.WebRootPath)
 	b, _ := ioutil.ReadFile(fPath)
 

@@ -52,6 +52,9 @@
     .iconx:hover{
      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(71, 77, 69, 0.6);
     }
+    .iconxsmall{
+      cursor: pointer;
+    }
     .iconxsmall:hover{
      box-shadow: 0 0.75p,x 1.25px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(71, 77, 69, 0.6);
     }
@@ -69,7 +72,8 @@
    </style>    
   </head>
   <body> 
-    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark mainbg">
+    {{.BannerMessage}}
+    <nav id="mainnavbar" class="navbar navbar-expand-md fixed-top navbar-dark bg-dark mainbg">      
 <a class="navbar-brand" href="/" style="color:honeydew; font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;" >
   Golang Sample Website
 </a>
@@ -92,13 +96,6 @@
         <a id="navcounterpoint" class="nav-link" 
         href="/music/theory/counterpoint/what-is-counterpoint">What is Counterpoint</a>
       </li> 
-      <li class="nav-item">
-        <p id="navtext" class="card-text mt-2 ml-5" 
-        style="font-size: 14pt;position: relative;left:100px; color:wheat;letter-spacing: 0.02cm">
-        This is a live-demo for <span id="demoHref" style="color:lawngreen;cursor:default"
-        title="https://github.com/kambahr/go-webstandard">go-webstandard</span>
-      </p>
-      </li>
     </ul>
     <style>
       #demoHref{

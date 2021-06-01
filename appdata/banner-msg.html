@@ -1,0 +1,67 @@
+<style>
+    .top-banner{
+        position:fixed;
+        margin-top:0 !important;
+        margin-left:0;
+        z-index:999999;
+        width:100%;
+        overflow: hidden;
+        height:50px;
+        min-height: 50px !important;
+        font-size:12pt;
+        font-family:Arial;
+        color:dimgray;    
+        background: rgb(2,0,36);
+        background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(255,246,0,1) 0%, rgba(235,235,235,1) 0%, rgba(241,244,243,1) 0%);
+        }
+</style>
+
+<div id="msgDivxmsgeojg9kzohpx3r5" style="display: none;" class="top-banner">
+    <div style="padding:10px;float: left;">
+        Your message goes here
+    </div>
+    <div 
+    onclick="dismissBanner();"
+    class="iconxsmall" style="color:darkrd;float: right;margin-right: 30px;
+    margin-top:10px;font-size: 16pt;">&#120;</div>
+</div>       
+<script>
+{{.COMMENT The cookie name and value is plain so that the
+end-user can see that it's for holding the option and not anything else...
+}}
+var cname = 'banner';
+setTimeout(() => {setnavbar();}, 1);
+function dismissBanner(){  
+  let cvalue = 'dismissed';
+  let d = new Date();
+  d.setTime(d.getTime() + (60 * 1000 * 60));
+  var expires = 'expires='+d.toUTCString();
+  document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
+  document.location.href = document.location.href; 
+}
+function setnavbar(){
+    let c = getCookieeojg9kzohpx3r5(cname);    
+    if(c == 'dismissed'){  
+        return;      
+    }
+    let nvb = document.getElementById('mainnavbar');
+    document.getElementById('msgDivxmsgeojg9kzohpx3r5').style.display = 'block';
+    nvb.style.top = '50px';
+    nvb.style.position = 'relative';
+}
+{{.COMMENT function name is scrambled to avoid name-collision }}
+function getCookieeojg9kzohpx3r5(cname) {
+  let name = cname + "=";
+  let ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+</script>
