@@ -15,10 +15,7 @@ func (e *Environment) validateAdminRequest(w http.ResponseWriter, r *http.Reques
 
 	ip := e.getRemoteIP(r)
 
-	ip = "23.43.2.3"
-
 	// if blank it's local ip.
-
 	if ip != "" {
 		ipFound := false
 		for i := 0; i < len(e.Config.Admin.AllowedIP); i++ {
