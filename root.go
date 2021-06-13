@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -85,12 +86,6 @@ func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if e.Config.Proto == "HTTPS" && strings.HasPrefix(r.Proto, "HTTP/") && e.Config.RedirectHTTPtoHTTPS {
-	// 	urlx := fmt.Sprintf("%s://%s:%d%s", strings.ToLower(e.Config.Proto), e.Config.HostName, e.Config.PortNo, r.URL.Path)
-	// 	http.Redirect(w, r, urlx, http.StatusTemporaryRedirect)
-	// 	return
-	// }
-
 	if e.Config.MaintenanceWindowOn {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		p := fmt.Sprintf("%s/maint-window.html", e.AppDataPath)
@@ -104,11 +99,6 @@ func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rPath := strings.ToLower(r.URL.Path)
-
-	if strings.HasPrefix(rPath, "/admin") {
-		e.adminRoot(w, r)
-		return
-	}
 
 	// Here you can process dynamic content or filter requests for securty.
 	// If you only want to serve static as-is html file, you can leave those
@@ -171,15 +161,9 @@ func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 	// This is all contents of the target page into the {{.MainContent}} block inside the master page.
 	bFinal := bytes.Replace(bMaster, []byte("{{.MainContent}}"), targetPageBytes, 1)
 
-	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var empty []byte
 
 	if e.Config.MessageBanner.On {
-		// if e.Config.MessageBanner.SecondsToDisplay > 0 &&
-		// 	e.Config.MessageBanner.TickCount == 0 {
-		// 	e.Config.MessageBanner.TickCount = e.Config.MessageBanner.SecondsToDisplay
-		// 	go e.setTimeoutResetMsgBanner()
-		// }
 
 		bmPath := fmt.Sprintf("%s//appdata/banner-msg.html", e.WebRootPath)
 		bm, err := ioutil.ReadFile(bmPath)
@@ -195,21 +179,37 @@ func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 		bFinal = bytes.Replace(bFinal, []byte("{{.BannerMessage}}"), empty, 1)
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	compressResponse := strings.Contains(r.Header.Get("Accept-Encoding"), "gzip")
 
 	if r.Method != "HEAD" {
+		if compressResponse {
+			w.Header().Set("Content-Encoding", "gzip")
+			w.Header().Set("Accept-Ranges", "bytes")
+			w.Header().Set("Transfer-Encoding", "gzip, chunked")
+		}
+
 		bFinal = e.applyPageVars(bFinal, rPath, w)
+
+		w.WriteHeader(http.StatusOK)
+
 		// Serve master + content file.
-		w.Write(bFinal)
+		if compressResponse {
+			var b bytes.Buffer
+			gw, _ := gzip.NewWriterLevel(&b, gzip.DefaultCompression)
+			gw.Write(bFinal)
+			gw.Close()
+			w.Write(b.Bytes())
+		} else {
+			w.Write(bFinal)
+		}
 	}
 }
 func (e *Environment) applyPageVars(b []byte, rPath string, w http.ResponseWriter) []byte {
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	// Replace any other variables.
 	b = bytes.Replace(b, []byte("{{.ThisYear}}"), []byte(fmt.Sprintf("%d", time.Now().Year())), -1)
-
 	b = e.writeFooter(b, rPath)
 
 	// Replace the comments last.
@@ -226,6 +226,7 @@ func (e *Environment) applyPageVars(b []byte, rPath string, w http.ResponseWrite
 	return b
 
 }
+
 func (e *Environment) writeFooter(b []byte, rPath string) []byte {
 	ft := ""
 

@@ -34,11 +34,16 @@ func main() {
 	page := NewPage(dir)
 
 	// First look at the config.
-	portNo := page.Config.PortNo
+	portNo := page.Config.Site.PortNo
 
 	// If port no is passed from command line, it will take priority.
 	if portNoArg > 0 {
 		portNo = portNoArg
+	}
+
+	if portNo < 1 {
+		log.Fatal("Invalid port number")
+		return
 	}
 
 	// Handler for static files.
@@ -70,8 +75,8 @@ func main() {
 		// More options before the request gets to the handlers.
 		ConnState: page.connState,
 	}
-	fmt.Println("Listening to port:", portNo, "for host:", page.Config.HostName)
-	if page.Config.Proto == "HTTP" {
+	fmt.Println("Listening to port:", portNo, "for host:", page.Config.Site.HostName)
+	if strings.ToUpper(page.Config.Site.Proto) == "HTTP" {
 		log.Fatal(svr.ListenAndServe())
 	} else {
 		if fileOrDirectoryExists(page.Config.TLS.CertFilePath) &&
