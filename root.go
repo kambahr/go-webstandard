@@ -187,7 +187,6 @@ func (e *Environment) FromRoot(w http.ResponseWriter, r *http.Request) {
 		if compressResponse {
 			w.Header().Set("Content-Encoding", "gzip")
 			w.Header().Set("Accept-Ranges", "bytes")
-			w.Header().Set("Transfer-Encoding", "gzip, chunked")
 		}
 
 		bFinal = e.applyPageVars(bFinal, rPath, w)
